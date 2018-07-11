@@ -1,0 +1,29 @@
+body {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: 1.8em;
+  background: #eee;
+  color: #666;
+}
+
+.letter {
+  margin: 1px;
+  position: relative;
+  display: inline-block;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  border: 2px solid #999;
+  font-size: 1.8rem;
+  text-align: center;
+  box-sizing: border-box;
+  background: #FFF;
+  cursor: pointer;
+  user-select: none;
+}
+
+.point {
+  font-size: 0.5rem;
+  position: absolute;
+  bottom: 0.2rem;
+  right: 0.2rem;
+}
