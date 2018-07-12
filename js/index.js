@@ -1,7 +1,12 @@
 import React, { Component } from "react";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getRandomLetters, reorder, move, score } from './board';
+import Timer from './timer';
 import words from './words';
+
+const GameTime = ({ started, time }) => started
+  ? <div id="timer"><span>{time}</span></div>
+  : null;
 
 const WordNotification = ({ isWord, word, score }) => (
   isWord
@@ -53,18 +58,18 @@ const initialGameData = () => {
   return {
     trayLetters,
     boardLetters,
-    started: false,
     isWord: false,
     currentWord: '',
     currentPoints: 0,
     guesses: [],
+    time: 0,
   }
 }
 
 class Game extends Component {
   constructor(props){
     super(props);
-    this.state = initialGameData();
+    this.state = { ...initialGameData(), started: false };
     this.onDragEnd = this.onDragEnd.bind(this);
     this.startGame = this.startGame.bind(this);
   }
@@ -111,8 +116,12 @@ class Game extends Component {
   }
 
   startGame(){
-    this.setState(initialGameData());
-    setTimeout(() => this.setState({ started: false }), 1500);
+    this.setState({ ...initialGameData(), started: true });
+    const timer = new Timer(3,
+      (count) => this.setState({ time: count }),
+      (count) => this.setState({ started: false })
+    );
+    // setTimeout(() => this.setState({ started: false }), 1500);
   }
 
   render () {
@@ -123,6 +132,7 @@ class Game extends Component {
       isWord,
       currentWord: word,
       currentScore: score,
+      time,
     } = this.state;
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
@@ -130,6 +140,7 @@ class Game extends Component {
         <div id="guess">
           <LetterSet droppableId="boardLetters" items={boardLetters} />
         </div>
+        <GameTime started={started} time={time} />
         <StartButton started={started} onClick={this.startGame} />
         <WordNotification {...{ isWord, word, score }} />
       </DragDropContext>
