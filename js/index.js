@@ -46,22 +46,25 @@ const StartButton = ({ started, onClick }) => (
   <button id='start' onClick={onClick}>Play</button>
 );
 
+const initialGameData = () => {
+  const trayLetters = getRandomLetters();
+  const boardLetters = [];
+
+  return {
+    trayLetters,
+    boardLetters,
+    started: false,
+    isWord: false,
+    currentWord: '',
+    currentPoints: 0,
+    guesses: [],
+  }
+}
+
 class Game extends Component {
   constructor(props){
     super(props);
-
-    const trayLetters = getRandomLetters();
-    const boardLetters = [];
-
-    this.state = {
-      trayLetters,
-      boardLetters,
-      started: false,
-      currentWord: '',
-      currentPoints: 0,
-      guesses: [],
-    }
-
+    this.state = initialGameData();
     this.onDragEnd = this.onDragEnd.bind(this);
     this.startGame = this.startGame.bind(this);
   }
@@ -108,11 +111,7 @@ class Game extends Component {
   }
 
   startGame(){
-    this.setState({
-      started: true,
-      trayLetters: getRandomLetters(),
-      boardLetters: [],
-    });
+    this.setState(initialGameData());
     setTimeout(() => this.setState({ started: false }), 1500);
   }
 
