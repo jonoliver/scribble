@@ -31,24 +31,24 @@ const letters = {
 const random = (arr) => (arr)[Math.floor(Math.random() * arr.length)];
 
 const tiles = Object.keys(letters)
-.reduce((output, letter) => output.concat(
-  new Array(letters[letter].tiles
+  .reduce((output, letter) => output.concat(
+    new Array(letters[letter].tiles
   ).fill(letter)), [])
 
   const score = (word) => word.split('')
-  .reduce((sum, letter) => sum + letters[letter].points, 0);
+    .reduce((sum, letter) => sum + letters[letter].points, 0);
 
   // {letter: "X", points: 1}
   const getRandomLetters = () => new Array(7).fill('')
-  .map((_, i) => {
-    const key = random(tiles);
-    const points = letters[key].points;
-    return {
-      id: i,
-      letter: key.toUpperCase(),
-      points,
-    }
-  })
+    .map((_, i) => {
+      const key = random(tiles);
+      const points = letters[key].points;
+      return {
+        id: i,
+        letter: key.toUpperCase(),
+        points,
+      }
+    })
 
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
