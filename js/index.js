@@ -24,7 +24,7 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 };
 
 const Letter = ({ index, item }) => (
-  <Draggable draggableId={index} index={index}>
+  <Draggable draggableId={item.id} index={index}>
     {(provided, snapshot) => (
       <div
         className='letter'
@@ -62,30 +62,41 @@ class Game extends Component {
       {
         letter: 'A',
         points: 1,
+        id: 1,
       },
       {
         letter: 'B',
         points: 2,
+        id: 2,
       },
       {
         letter: 'C',
         points: 3,
+        id: 3,
       },
     ]
 
     const boardLetters = [
       {
-        letter: 'C',
+        letter: 'Z',
         points: 3,
+        id: 4,
       },
       {
-        letter: 'B',
-        points: 2,
+        letter: 'Y',
+        points: 5,
+        id: 5,
+      },
+      {
+        letter: 'X',
+        points: 6,
+        id: 6,
       },
     ]
 
     this.state = {
-      items: { trayLetters, boardLetters }
+      trayLetters,
+      boardLetters,
     }
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -94,49 +105,42 @@ class Game extends Component {
     // dropped outside the list
     const { source, destination } = result;
 
-    if (!destination) {
-      return;
-    }
+    if (!destination) return;
 
     if (source.droppableId === destination.droppableId) {
-      const trayLetters = reorder(
-        this.state.items.trayLetters,
+      const letters = reorder(
+        this.state[source.droppableId],
         result.source.index,
         result.destination.index
       );
 
-      const { boardLetters } = this.state.items;
-
       this.setState({
-        items: { trayLetters, boardLetters },
+        [source.droppableId]: letters,
       });
     }
     else {
-      const result = move(
-        this.state.items[source.droppableId],
-        this.state.items[destination.droppableId],
+      const letters = move(
+        this.state[source.droppableId],
+        this.state[destination.droppableId],
         source,
         destination
       );
-      console.log(result);
       this.setState({
-        items: {
-          trayLetters: result.trayLetters,
-          boardLetters: result.boardLetters,
-        }
+        trayLetters: letters.trayLetters,
+        boardLetters: letters.boardLetters,
       });
     }
   }
 
   render () {
-    const { items } = this.state;
+    const { trayLetters, boardLetters } = this.state;
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <LetterSet droppableId="trayLetters" items={items.trayLetters} />
-        <LetterSet droppableId="boardLetters" items={items.boardLetters} />
+        <LetterSet droppableId="trayLetters" items={trayLetters} />
+        <LetterSet droppableId="boardLetters" items={boardLetters} />
       </DragDropContext>
     );
   }
 }
 
-export default ({ message }) => <Game />;
+export default () => <Game />;
