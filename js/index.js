@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { getRandomLetters, reorder, move } from './board';
+import { getRandomLetters, reorder, move, score } from './board';
+import words from './words';
+
+const WordNotification = ({ isWord, word, score }) => (
+  isWord
+    ? <div id="notify-is-word" className="">{word} is worth {score} points!</div>
+    : null
+)
 
 const Letter = ({ index, item }) => (
   <Draggable draggableId={item.id} index={index}>
@@ -50,6 +57,9 @@ class Game extends Component {
       trayLetters,
       boardLetters,
       started: false,
+      currentWord: '',
+      currentPoints: 0,
+      guesses: [],
     }
 
     this.onDragEnd = this.onDragEnd.bind(this);
@@ -85,6 +95,16 @@ class Game extends Component {
         boardLetters: letters.boardLetters,
       });
     }
+
+    if (source.droppableId === 'boardLetters' || destination.droppableId === 'boardLetters') {
+      const currentWord = this.state.boardLetters.map(l => l.letter).join('');
+      const isWord = words.includes(currentWord.toUpperCase());
+      const currentScore = score(currentWord);
+      const guesses = isWord
+        ? this.state.guesses.concat({ word: currentWord, score: currentScore })
+        : this.state.guesses
+      this.setState({ isWord, currentWord, currentScore, guesses });
+    }
   }
 
   startGame(){
@@ -97,7 +117,14 @@ class Game extends Component {
   }
 
   render () {
-    const { trayLetters, boardLetters, started } = this.state;
+    const {
+      trayLetters,
+      boardLetters,
+      started,
+      isWord,
+      currentWord: word,
+      currentScore: score,
+    } = this.state;
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
         <LetterSet droppableId="trayLetters" items={trayLetters} />
@@ -105,6 +132,7 @@ class Game extends Component {
           <LetterSet droppableId="boardLetters" items={boardLetters} />
         </div>
         <StartButton started={started} onClick={this.startGame} />
+        <WordNotification {...{ isWord, word, score }} />
       </DragDropContext>
     );
   }
