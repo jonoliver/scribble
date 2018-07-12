@@ -4,15 +4,23 @@ import { getRandomLetters, reorder, move, score } from './board';
 import Timer from './timer';
 import words from './words';
 
-const GameTime = ({ started, time }) => started
-  ? <div id="timer"><span>{time}</span></div>
-  : null;
+const Show = ({ when, children }) => when ? children : null;
 
-const WordNotification = ({ isWord, word, score }) => (
-  isWord
-    ? <div id="notify-is-word" className="">{word} is worth {score} points!</div>
-    : null
-)
+const StartButton = ({ onClick }) =>
+  <button id='start' onClick={onClick}>Play</button>;
+
+const GameTime = ({ started, time }) =>
+  <div id="timer"><span>{time}</span></div>;
+
+const WordNotification = ({ word, score }) =>
+  <div id="notify-is-word" className="">{word} is worth {score} points!</div>;
+
+const HighScore = ({ message, guesses }) => {
+  if (guesses.length === 0) return null;
+  const highScore = guesses.sort((a, b) => b.score - a.score)[0];
+  const { word, score } = highScore;
+  return <div>{message} <b>{word}</b>, for <b>{score}</b> points</div>;
+}
 
 const Letter = ({ index, item }) => (
   <Draggable draggableId={item.id} index={index}>
@@ -46,30 +54,20 @@ const LetterSet = ({ droppableId, items }) => (
   </Droppable>
 )
 
-const StartButton = ({ started, onClick }) => (
-  started ? null :
-  <button id='start' onClick={onClick}>Play</button>
-);
-
-const initialGameData = () => {
-  const trayLetters = getRandomLetters();
-  const boardLetters = [];
-
-  return {
-    trayLetters,
-    boardLetters,
-    isWord: false,
-    currentWord: '',
-    currentPoints: 0,
-    guesses: [],
-    time: 0,
-  }
-}
+const initialGameData = {
+  trayLetters: [],
+  boardLetters: [],
+  isWord: false,
+  currentWord: '',
+  currentPoints: 0,
+  guesses: [],
+  time: 0,
+};
 
 class Game extends Component {
   constructor(props){
     super(props);
-    this.state = { ...initialGameData(), started: false };
+    this.state = { ...initialGameData, started: false };
     this.onDragEnd = this.onDragEnd.bind(this);
     this.startGame = this.startGame.bind(this);
   }
@@ -116,8 +114,9 @@ class Game extends Component {
   }
 
   startGame(){
-    this.setState({ ...initialGameData(), started: true });
-    const timer = new Timer(3,
+    const trayLetters = getRandomLetters();
+    this.setState({ ...initialGameData, trayLetters, started: true });
+    const timer = new Timer(10,
       (count) => this.setState({ time: count }),
       (count) => this.setState({ started: false })
     );
@@ -130,9 +129,10 @@ class Game extends Component {
       boardLetters,
       started,
       isWord,
+      time,
+      guesses,
       currentWord: word,
       currentScore: score,
-      time,
     } = this.state;
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
@@ -140,9 +140,23 @@ class Game extends Component {
         <div id="guess">
           <LetterSet droppableId="boardLetters" items={boardLetters} />
         </div>
-        <GameTime started={started} time={time} />
-        <StartButton started={started} onClick={this.startGame} />
-        <WordNotification {...{ isWord, word, score }} />
+
+        <Show when={!started}>
+          <StartButton onClick={this.startGame} />
+        </Show>
+
+        <Show when={started}>
+          <GameTime started={started} time={time} />
+        </Show>
+
+        <Show when={started && isWord}>
+          <WordNotification {...{ word, score }} />
+        </Show>
+
+        <Show when={!started}>
+          <HighScore message='Your highest scoring word was' {...{ started, guesses }} />
+        </Show>
+
       </DragDropContext>
     );
   }
