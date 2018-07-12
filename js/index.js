@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { getRandomLetters } from './board';
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -42,13 +43,14 @@ const Letter = ({ index, item }) => (
 const LetterSet = ({ droppableId, items }) => (
   <Droppable droppableId={droppableId} direction="horizontal">
     {(provided, snapshot) => (
-      <div style={{display: 'flex'}}
+      <div className='drop-target'
         ref={provided.innerRef}
         {...provided.droppableProps}
       >
       {
         items.map((item, index) => <Letter key={index} {...{ index, item} } />)
       }
+      {provided.placeholder}
     </div>
     )}
   </Droppable>
@@ -58,41 +60,8 @@ class Game extends Component {
   constructor(props){
     super(props);
 
-    const trayLetters = [
-      {
-        letter: 'A',
-        points: 1,
-        id: 1,
-      },
-      {
-        letter: 'B',
-        points: 2,
-        id: 2,
-      },
-      {
-        letter: 'C',
-        points: 3,
-        id: 3,
-      },
-    ]
-
-    const boardLetters = [
-      {
-        letter: 'Z',
-        points: 3,
-        id: 4,
-      },
-      {
-        letter: 'Y',
-        points: 5,
-        id: 5,
-      },
-      {
-        letter: 'X',
-        points: 6,
-        id: 6,
-      },
-    ]
+    const trayLetters = getRandomLetters();
+    const boardLetters = [];
 
     this.state = {
       trayLetters,
@@ -137,7 +106,9 @@ class Game extends Component {
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
         <LetterSet droppableId="trayLetters" items={trayLetters} />
-        <LetterSet droppableId="boardLetters" items={boardLetters} />
+        <div id="guess">
+          <LetterSet droppableId="boardLetters" items={boardLetters} />
+        </div>
       </DragDropContext>
     );
   }
