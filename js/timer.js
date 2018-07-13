@@ -2,7 +2,6 @@ function Timer(count,
   onTick = () => {},
   onDone = () => {},
 ){
-  console.log(this);
   onTick(count)
   const updateTimer = () => {
     count--;
