@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { getRandomLetters, reorder, move, score } from './board';
+import { getRandomLetters, getHighScore, reorder, move, score } from './board';
+import guesser from './guesser';
 import Timer from './timer';
 
 const Show = ({ when, children }) => when ? children : null;
@@ -14,15 +15,18 @@ const GameTime = ({ started, time }) =>
 const WordNotification = ({ word, score }) =>
   <div id="notify-is-word" className="">{word} is worth {score} points!</div>;
 
-const Score = ({ message, word, score }) =>
-  <div>{message} <b>{word}</b>, for <b>{score}</b> points</div>;
-
-const HighScore = ({ message, guesses }) => {
-  if (guesses.length === 0) return null;
-  const highScore = guesses.sort((a, b) => b.score - a.score)[0];
-  const { word, score } = highScore;
-  return <Score {...{ message, word, score }} />
+const Score = ({ message, noWordMessage, word, score }) => {
+  if (!word) return <div>{noWordMessage}</div>;
+  return <div>{message} <b>{word}</b>, for <b>{score}</b> points</div>;
 }
+
+const WinLose = ({ human, robot }) =>
+  <div className="winner">
+    {
+      (human.score === robot.score) ? "It's a tie!" :
+      (human.score > robot.score) ? "You win!" : "The robot wins!"
+    }
+  </div>
 
 const Letter = ({ index, item }) => (
   <Draggable draggableId={item.id} index={index}>
@@ -64,14 +68,14 @@ const initialGameData = {
   currentPoints: 0,
   guesses: [],
   robotGuesses: [],
-  robotGuess: '',
+  robotGuess: null,
   time: 0,
 };
 
 class Game extends Component {
   constructor(props){
     super(props);
-    this.state = { ...initialGameData, started: false };
+    this.state = { ...initialGameData, started: false, firstGame: true, };
     this.onDragEnd = this.onDragEnd.bind(this);
     this.startGame = this.startGame.bind(this);
   }
@@ -87,7 +91,13 @@ class Game extends Component {
       const robotGuesses = e.data
         .map(w => ({ word: w, score: score(w) }))
         .sort((a, b) => b.score - a.score);
-      this.setState({ robotGuesses });
+
+      const robotGuess = guesser(1, robotGuesses);
+
+      this.setState({
+        robotGuess,
+        robotGuesses,
+      });
       // console.log(Scribble.guesser(0, Scribble.results))
     }
   }
@@ -135,12 +145,11 @@ class Game extends Component {
 
   startGame(){
     const trayLetters = getRandomLetters();
-    this.setState({ ...initialGameData, trayLetters, started: true });
+    this.setState({ ...initialGameData, trayLetters, started: true, firstGame: false });
     const timer = new Timer(10,
       (count) => this.setState({ time: count }),
       (count) => this.setState({ started: false })
     );
-    console.log({trayLetters});
     const combo = trayLetters.map(l => l.letter);
     this.props.worker.postMessage({ type: 'calc', combo });
     // setTimeout(() => this.setState({ started: false }), 1500);
@@ -151,15 +160,16 @@ class Game extends Component {
       trayLetters,
       boardLetters,
       started,
+      firstGame,
       isWord,
       time,
       guesses,
-      robotGuesses,
       currentWord: word,
       currentScore: score,
     } = this.state;
 
-    const robotGuess = robotGuesses[0];
+    const humanGuess = getHighScore(guesses) || ({ score: 0 });
+    const robotGuess = this.state.robotGuess || ({ score: 0 });
 
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
@@ -180,11 +190,18 @@ class Game extends Component {
           <WordNotification {...{ word, score }} />
         </Show>
 
-        <Show when={!started}>
-          <HighScore message='Your highest scoring word was' {...{ guesses }} />
-          <Show when={robotGuesses.length > 0}>
-            <Score message='The robot chose' {...robotGuess} />
-          </Show>
+        <Show when={!started && !firstGame}>
+          <WinLose human={humanGuess} robot={robotGuess} />
+          <Score
+            message='Your highest scoring word was'
+            noWordMessage="You didn't guess any words."
+            {...humanGuess}
+          />
+          <Score
+            message='The robot chose'
+            noWordMessage="The robot couldn't think of any words."
+            {...robotGuess}
+          />
         </Show>
 
       </DragDropContext>
