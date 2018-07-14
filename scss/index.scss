@@ -83,15 +83,39 @@ button:hover {
   margin-top: 1rem;
 }
 
-#result {
-  display: flex;
-  width: 120px;
-  margin: auto;
+#wordlist {
+  margin: 1rem auto;
   text-align: left;
-  flex-wrap: wrap;
-  max-height: 0;
-  overflow-y: hidden;
-  transition: 1s;
+  max-width: 500px;
+  background: #FFF;
+  box-sizing: border-box;
+  border: 3px solid #92dede;
+
+  p {
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0 1.5rem;
+    // transition: 1s;
+    columns: 4;
+
+    @media (max-width: 420px) {
+      columns: 3;
+    }
+    @media (max-width: 320px) {
+      columns: 2;
+    }
+    @media (max-width: 210px) {
+      columns: 1;
+    }
+  }
+
+  li {
+    margin-bottom: 0.4rem;
+  }
 }
 
 #result.show {

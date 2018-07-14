@@ -61,6 +61,18 @@ const LetterSet = ({ droppableId, items }) => (
   </Droppable>
 )
 
+const WordList = ({ words }) =>
+  <div id="wordlist">
+    <p><a>Other words</a></p>
+    <ul>
+    {words.map(w => w.word.toLowerCase()).sort().map(word =>
+      <li>
+        <a target="_blank" href={`http://scrabble.merriam.com/finder/${word}`}>{word}</a>
+      </li>
+    )}
+    </ul>
+  </div>
+
 const initialGameData = {
   trayLetters: [],
   boardLetters: [],
@@ -166,6 +178,7 @@ class Game extends Component {
       isWord,
       time,
       guesses,
+      robotGuesses,
       currentWord: word,
       currentScore: score,
     } = this.state;
@@ -180,16 +193,16 @@ class Game extends Component {
           <LetterSet droppableId="boardLetters" items={boardLetters} />
         </div>
 
-        <Show when={!started}>
-          <StartButton onClick={this.startGame} />
-        </Show>
-
         <Show when={started}>
           <GameTime started={started} time={time} />
         </Show>
 
         <Show when={started && isWord}>
           <WordNotification {...{ word, score }} />
+        </Show>
+
+        <Show when={!started}>
+          <StartButton onClick={this.startGame} />
         </Show>
 
         <Show when={!started && !firstGame}>
@@ -204,6 +217,8 @@ class Game extends Component {
             noWordMessage="The robot couldn't think of any words."
             {...robotGuess}
           />
+
+          <WordList words={robotGuesses} />
         </Show>
 
       </DragDropContext>
