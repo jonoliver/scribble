@@ -94,12 +94,34 @@ button:hover {
   p {
     text-align: center;
     text-transform: uppercase;
+    margin: 0;
+    a {
+      cursor: pointer;
+      display: block;
+      padding: 1rem;
+
+      &:hover {
+        // color: darken(#ec5f5f, 20);
+        // text-decoration: underline;
+        background: darken(#FFF, 2);
+      }
+    }
+  }
+
+  > div {
+    max-height: 0;
+    overflow-y: scroll;
+    transition: 1s;
+
+    &.show {
+      max-height: 500px;
+    }
   }
 
   ul {
     list-style-type: none;
     padding: 0 1.5rem;
-    // transition: 1s;
+    transition: 1s;
     columns: 4;
 
     @media (max-width: 420px) {

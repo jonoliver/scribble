@@ -61,17 +61,40 @@ const LetterSet = ({ droppableId, items }) => (
   </Droppable>
 )
 
-const WordList = ({ words }) =>
-  <div id="wordlist">
-    <p><a>Other words</a></p>
-    <ul>
-    {words.map(w => w.word.toLowerCase()).sort().map(word =>
-      <li>
-        <a target="_blank" href={`http://scrabble.merriam.com/finder/${word}`}>{word}</a>
-      </li>
-    )}
-    </ul>
-  </div>
+class WordList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { show: false };
+    this.toggle = this.toggle.bind(this);
+  }
+
+  toggle() {
+    this.setState({ show: !this.state.show })
+  }
+
+  render() {
+    const { show } = this.state;
+    const words = this.props.words.map(w => w.word.toLowerCase()).sort();
+    return (
+      <div id="wordlist">
+        <p>
+          <a onClick={this.toggle}>
+            {show ? 'hide' : 'show'} other words
+          </a>
+        </p>
+        <div className={show ? 'show' : ''}>
+          <ul>
+          {words.map(word =>
+            <li>
+              <a target="_blank" href={`http://scrabble.merriam.com/finder/${word}`}>{word}</a>
+            </li>
+          )}
+          </ul>
+        </div>
+      </div>
+    );
+  }
+}
 
 const initialGameData = {
   trayLetters: [],
