@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "parcel index.html"
+    "start": "ENV=development parcel index.html",
+    "start:prod": "parcel index.html"
   },
   "author": "",
   "license": "ISC",

@@ -3,6 +3,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getRandomLetters, getHighScore, reorder, move, score } from './board';
 import guesser from './guesser';
 import Timer from './timer';
+import settings from './settings';
 
 const Show = ({ when, children }) => when ? children : null;
 
@@ -146,7 +147,8 @@ class Game extends Component {
   startGame(){
     const trayLetters = getRandomLetters();
     this.setState({ ...initialGameData, trayLetters, started: true, firstGame: false });
-    const timer = new Timer(10,
+    const timer = new Timer(
+      settings.gameTime,
       (count) => this.setState({ time: count }),
       (count) => this.setState({ started: false })
     );
