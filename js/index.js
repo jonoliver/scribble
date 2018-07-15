@@ -168,6 +168,10 @@ class Game extends Component {
       });
     }
 
+    // don't update guess/sscore if game is over
+    if (!this.state.started) return;
+
+    // update guesses/score
     if (source.droppableId === 'boardLetters' || destination.droppableId === 'boardLetters') {
       const currentWord = this.state.boardLetters.map(l => l.letter).join('');
       const isWord = this.props.words.includes(currentWord.toUpperCase());
