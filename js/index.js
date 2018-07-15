@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { getRandomLetters, getHighScore, reorder, move, score } from './board';
+import { getRandomLetters, getHighScore, score } from './board';
+import Board from './components/sortable-board';
+// import Board from './components/beautiful-dnd-board';
 import guesser from './guesser';
 import Timer from './timer';
 import settings from './settings';
@@ -28,38 +29,6 @@ const WinLose = ({ human, robot }) =>
       (human.score > robot.score) ? "You win!" : "The robot wins!"
     }
   </div>
-
-const Letter = ({ index, item }) => (
-  <Draggable draggableId={item.id} index={index}>
-    {(provided, snapshot) => (
-      <div
-        className='letter'
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-      >
-        <span>{item.letter}</span>
-        <span className='point'>{item.points}</span>
-      </div>
-    )}
-  </Draggable>
-);
-
-const LetterSet = ({ droppableId, items }) => (
-  <Droppable droppableId={droppableId} direction="horizontal">
-    {(provided, snapshot) => (
-      <div className='drop-target'
-        ref={provided.innerRef}
-        {...provided.droppableProps}
-      >
-      {
-        items.map((item, index) => <Letter key={index} {...{ index, item} } />)
-      }
-      {provided.placeholder}
-    </div>
-    )}
-  </Droppable>
-)
 
 class WordList extends Component {
   constructor(props) {
@@ -111,7 +80,6 @@ class Game extends Component {
   constructor(props){
     super(props);
     this.state = { ...initialGameData, started: false, firstGame: true, };
-    this.onDragEnd = this.onDragEnd.bind(this);
     this.startGame = this.startGame.bind(this);
     this.updateGuess = this.updateGuess.bind(this);
   }
@@ -135,42 +103,6 @@ class Game extends Component {
         robotGuesses,
       });
       // console.log(Scribble.guesser(0, Scribble.results))
-    }
-  }
-
-  onDragEnd(result) {
-    // dropped outside the list
-    const { source, destination } = result;
-
-    if (!destination) return;
-
-    if (source.droppableId === destination.droppableId) {
-      const letters = reorder(
-        this.state[source.droppableId],
-        result.source.index,
-        result.destination.index
-      );
-
-      this.setState({
-        [source.droppableId]: letters,
-      });
-    }
-    else {
-      const letters = move(
-        this.state[source.droppableId],
-        this.state[destination.droppableId],
-        source,
-        destination
-      );
-      this.setState({
-        trayLetters: letters.trayLetters,
-        boardLetters: letters.boardLetters,
-      });
-    }
-
-    // update guesses/score
-    if (source.droppableId === 'boardLetters' || destination.droppableId === 'boardLetters') {
-      this.updateGuess(this.state.boardLetters.map(l => l.letter));
     }
   }
 
@@ -221,15 +153,11 @@ class Game extends Component {
     const humanGuess = getHighScore(guesses) || ({ score: 0 });
     const robotGuess = this.state.robotGuess || ({ score: 0 });
 
+    const { updateGuess } = this;
+
     return (
       <Fragment>
-        <DragDropContext onDragEnd={this.onDragEnd}>
-          <LetterSet droppableId="trayLetters" items={trayLetters} />
-          <div id="guess">
-            <LetterSet droppableId="boardLetters" items={boardLetters} />
-          </div>
-        </DragDropContext>
-
+        <Board {...{ trayLetters, boardLetters, started, updateGuess }} />
         <Show when={started}>
           <GameTime started={started} time={time} />
         </Show>
