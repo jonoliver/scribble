@@ -20,7 +20,8 @@
     "node-sass": "^4.9.0",
     "parcel-bundler": "^1.8.1",
     "react-beautiful-dnd": "^8.0.3",
-    "react-test-renderer": "^16.4.0"
+    "react-test-renderer": "^16.4.0",
+    "sortablejs": "^1.7.0"
   },
   "dependencies": {
     "react": "^16.4.0",
