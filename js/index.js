@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getRandomLetters, getHighScore, reorder, move, score } from './board';
 import guesser from './guesser';
@@ -222,11 +222,13 @@ class Game extends Component {
     const robotGuess = this.state.robotGuess || ({ score: 0 });
 
     return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
-        <LetterSet droppableId="trayLetters" items={trayLetters} />
-        <div id="guess">
-          <LetterSet droppableId="boardLetters" items={boardLetters} />
-        </div>
+      <Fragment>
+        <DragDropContext onDragEnd={this.onDragEnd}>
+          <LetterSet droppableId="trayLetters" items={trayLetters} />
+          <div id="guess">
+            <LetterSet droppableId="boardLetters" items={boardLetters} />
+          </div>
+        </DragDropContext>
 
         <Show when={started}>
           <GameTime started={started} time={time} />
@@ -255,8 +257,7 @@ class Game extends Component {
 
           <WordList words={robotGuesses} />
         </Show>
-
-      </DragDropContext>
+      </Fragment>
     );
   }
 }
