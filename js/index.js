@@ -99,9 +99,8 @@ class WordList extends Component {
 const initialGameData = {
   trayLetters: [],
   boardLetters: [],
-  isWord: false,
   currentWord: '',
-  currentPoints: 0,
+  currentScore: 0,
   guesses: [],
   robotGuesses: [],
   robotGuess: null,
@@ -175,11 +174,16 @@ class Game extends Component {
     if (source.droppableId === 'boardLetters' || destination.droppableId === 'boardLetters') {
       const currentWord = this.state.boardLetters.map(l => l.letter).join('');
       const isWord = this.props.words.includes(currentWord.toUpperCase());
-      const currentScore = score(currentWord);
-      const guesses = isWord
-        ? this.state.guesses.concat({ word: currentWord, score: currentScore })
-        : this.state.guesses
-      this.setState({ isWord, currentWord, currentScore, guesses });
+
+      let newState = { currentWord: '', currentScore: 0 };
+
+      if (isWord) {
+        const currentScore = score(currentWord);
+        const guesses = this.state.guesses.concat({ word: currentWord, score: currentScore })
+        newState = { currentWord, currentScore, guesses };
+      }
+
+      this.setState(newState);
     }
   }
 
@@ -202,7 +206,6 @@ class Game extends Component {
       boardLetters,
       started,
       firstGame,
-      isWord,
       time,
       guesses,
       robotGuesses,
@@ -224,7 +227,7 @@ class Game extends Component {
           <GameTime started={started} time={time} />
         </Show>
 
-        <Show when={started && isWord}>
+        <Show when={started && word}>
           <WordNotification {...{ word, score }} />
         </Show>
 
