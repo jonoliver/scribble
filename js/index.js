@@ -113,6 +113,7 @@ class Game extends Component {
     this.state = { ...initialGameData, started: false, firstGame: true, };
     this.onDragEnd = this.onDragEnd.bind(this);
     this.startGame = this.startGame.bind(this);
+    this.updateGuess = this.updateGuess.bind(this);
   }
 
   componentDidMount() {
@@ -167,24 +168,28 @@ class Game extends Component {
       });
     }
 
-    // don't update guess/sscore if game is over
-    if (!this.state.started) return;
-
     // update guesses/score
     if (source.droppableId === 'boardLetters' || destination.droppableId === 'boardLetters') {
-      const currentWord = this.state.boardLetters.map(l => l.letter).join('');
-      const isWord = this.props.words.includes(currentWord.toUpperCase());
-
-      let newState = { currentWord: '', currentScore: 0 };
-
-      if (isWord) {
-        const currentScore = score(currentWord);
-        const guesses = this.state.guesses.concat({ word: currentWord, score: currentScore })
-        newState = { currentWord, currentScore, guesses };
-      }
-
-      this.setState(newState);
+      this.updateGuess(this.state.boardLetters.map(l => l.letter));
     }
+  }
+
+  updateGuess(letters) {
+    // don't update guess/score if game is over
+    if (!this.state.started) return;
+
+    const currentWord = letters.join('');
+    const isWord = this.props.words.includes(currentWord.toUpperCase());
+
+    let newState = { currentWord: '', currentScore: 0 };
+
+    if (isWord) {
+      const currentScore = score(currentWord);
+      const guesses = this.state.guesses.concat({ word: currentWord, score: currentScore })
+      newState = { currentWord, currentScore, guesses };
+    }
+
+    this.setState(newState);
   }
 
   startGame(){
