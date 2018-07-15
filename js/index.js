@@ -85,7 +85,7 @@ class WordList extends Component {
         <div className={show ? 'show' : ''}>
           <ul>
           {words.map(word =>
-            <li>
+            <li key={word}>
               <a target="_blank" href={`http://scrabble.merriam.com/finder/${word}`}>{word}</a>
             </li>
           )}
