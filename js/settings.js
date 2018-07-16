@@ -3,7 +3,7 @@ const development = {
 };
 
 const production = {
-  gameTime: 30,
+  gameTime: 45,
 }
 
 const config = {
