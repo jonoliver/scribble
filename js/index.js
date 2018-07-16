@@ -15,7 +15,7 @@ const GameTime = ({ started, time }) =>
   <div id="timer"><span>{time}</span></div>;
 
 const WordNotification = ({ word, score }) =>
-  <div id="notify-is-word" className=""><b>{word}</b> is worth {score} points!</div>;
+  <div id="notify-is-word" className=""><b>{word}</b> is worth <b>{score}</b> points!</div>;
 
 const Score = ({ message, noWordMessage, word, score }) => {
   if (!word) return <div>{noWordMessage}</div>;
