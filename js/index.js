@@ -117,7 +117,6 @@ class Game extends Component {
         robotGuess,
         robotGuesses,
       });
-      // console.log(Scribble.guesser(0, Scribble.results))
     }
   }
 
@@ -149,7 +148,6 @@ class Game extends Component {
     );
     const combo = trayLetters.map(l => l.letter);
     this.props.worker.postMessage({ type: 'calc', combo });
-    // setTimeout(() => this.setState({ started: false }), 1500);
   }
 
   render () {
