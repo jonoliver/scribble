@@ -48,14 +48,16 @@ class SortableBoard extends Component {
     const { trayLetters, boardLetters } = this.props;
     return (
       <Fragment>
-      <div ref={this.trayRef} className='drop-target'>
-        {trayLetters.map((item, index) => <Tile key={index} {...{item}} />)}
-      </div>
-      <div id="guess">
-        <div ref={this.boardRef} className='drop-target'>
-          {boardLetters.map((item, index) => <Tile key={index} {...{item}} />)}
+        <div className="tray">
+          <div ref={this.trayRef} className='drop-target'>
+            {trayLetters.map((item, index) => <Tile key={index} {...{ item }} />)}
+          </div>
         </div>
-      </div>
+        <div className="board">
+          <div ref={this.boardRef} className='drop-target'>
+            {boardLetters.map((item, index) => <Tile key={index} {...{ item }} />)}
+          </div>
+        </div>
       </Fragment>
     );
   }

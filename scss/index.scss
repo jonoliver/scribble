@@ -35,7 +35,12 @@ a {
   display: flex;
   justify-content: center;
 }
-#guess {
+
+.tray {
+  margin: 1.5rem auto 0.5rem;
+}
+
+.board {
   background: #fff;
   border-top: 2px dashed #b1b1b1;
   border-bottom: 2px dashed #b1b1b1;

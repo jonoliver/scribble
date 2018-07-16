@@ -90,8 +90,10 @@ class BeautifulDnDBoard extends Component {
     const { trayLetters, boardLetters } = this.state;
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <LetterSet droppableId="trayLetters" items={trayLetters} />
-        <div id="guess">
+        <div className="tray">
+          <LetterSet droppableId="trayLetters" items={trayLetters} />
+        </div>
+        <div className="board">
           <LetterSet droppableId="boardLetters" items={boardLetters} />
         </div>
       </DragDropContext>
