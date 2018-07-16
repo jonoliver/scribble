@@ -30,6 +30,21 @@ const WinLose = ({ human, robot }) =>
     }
   </div>
 
+const Instructions = ({ time }) =>
+  <div className='instructions'>
+    <h1>
+      Scribble
+    </h1>
+    <h2>
+      A fun game to hone your wordmaking ability
+    </h2>
+    <p>
+      Drag letters into the white area to create words.
+      You have you have {time} seconds to beat the robot!
+    </p>
+  </div>
+
+
 class WordList extends Component {
   constructor(props) {
     super(props);
@@ -157,7 +172,14 @@ class Game extends Component {
 
     return (
       <Fragment>
-        <Board {...{ trayLetters, boardLetters, started, updateGuess }} />
+        <Show when={firstGame}>
+          <Instructions time={settings.gameTime} />
+        </Show>
+
+        <Show when={!firstGame}>
+          <Board {...{ trayLetters, boardLetters, started, updateGuess }} />
+        </Show>
+
         <Show when={started}>
           <GameTime started={started} time={time} />
         </Show>
