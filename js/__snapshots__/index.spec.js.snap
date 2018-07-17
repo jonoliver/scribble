@@ -1,7 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`displays the message (snapshot) 1`] = `
-<p>
-  Hello World!
-</p>
+exports[`renders 1`] = `
+Array [
+  <div
+    className="instructions"
+  >
+    <h1>
+      Scribble
+    </h1>
+    <h2>
+      A fun game to hone your wordmaking ability
+    </h2>
+    <p>
+      Drag letters into the white area to create words. You have you have 
+      45
+       seconds to beat the robot!
+    </p>
+  </div>,
+  <button
+    id="start"
+    onClick={[Function]}
+  >
+    Play
+  </button>,
+]
 `;
