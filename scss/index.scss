@@ -91,6 +91,16 @@ button:hover {
   background: #d65353;
 }
 
+select {
+  background: white;
+  border: none;
+  border-radius: 0;
+  display: block;
+  height: 30px;
+  color: #6f6f6f;
+  margin: 1rem auto 0;
+}
+
 #timer, .winner {
   margin: 1rem;
   font-size: 2rem;

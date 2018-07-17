@@ -17,6 +17,26 @@ Array [
        seconds to beat the robot!
     </p>
   </div>,
+  <select
+    onChange={[Function]}
+    value={1}
+  >
+    <option
+      value="2"
+    >
+      Easy
+    </option>
+    <option
+      value="1"
+    >
+      Medium
+    </option>
+    <option
+      value="0"
+    >
+      Hard
+    </option>
+  </select>,
   <button
     id="start"
     onClick={[Function]}

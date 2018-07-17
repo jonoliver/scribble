@@ -80,6 +80,13 @@ class WordList extends Component {
   }
 }
 
+const Difficulty = ({ value, onChange }) => 
+  <select value={value} onChange={e => onChange(e.target.value)}>
+    <option value="2">Easy</option>
+    <option value="1">Medium</option>
+    <option value="0">Hard</option>
+  </select>
+
 const initialGameData = {
   trayLetters: [],
   boardLetters: [],
@@ -94,9 +101,15 @@ const initialGameData = {
 class Game extends Component {
   constructor(props){
     super(props);
-    this.state = { ...initialGameData, started: false, firstGame: true, };
+    this.state = { 
+      ...initialGameData,
+      started: false,
+      firstGame: true,
+      difficulty: 1,
+    };
     this.startGame = this.startGame.bind(this);
     this.updateGuess = this.updateGuess.bind(this);
+    this.setDifficulty = this.setDifficulty.bind(this);
   }
 
   componentDidMount() {
@@ -111,7 +124,7 @@ class Game extends Component {
         .map(w => ({ word: w, score: score(w) }))
         .sort((a, b) => b.score - a.score);
 
-      const robotGuess = guesser(1, robotGuesses);
+      const robotGuess = guesser(this.state.difficulty, robotGuesses);
 
       this.setState({
         robotGuess,
@@ -150,6 +163,11 @@ class Game extends Component {
     this.props.worker.postMessage({ type: 'calc', combo });
   }
 
+  setDifficulty(value) {
+    const difficulty = parseInt(value);
+    this.setState({ difficulty });
+  }
+
   render () {
     const {
       trayLetters,
@@ -158,6 +176,7 @@ class Game extends Component {
       firstGame,
       time,
       guesses,
+      difficulty,
       robotGuesses,
       currentWord: word,
       currentScore: score,
@@ -187,6 +206,7 @@ class Game extends Component {
         </Show>
 
         <Show when={!started}>
+          <Difficulty value={difficulty} onChange={this.setDifficulty} />
           <StartButton onClick={this.startGame} />
         </Show>
 
