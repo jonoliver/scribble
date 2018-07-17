@@ -7,8 +7,8 @@
     "test": "jest",
     "start": "ENV=development parcel index.html",
     "start:prod": "parcel index.html",
-    "build": "parcel build index.html --public-url '.'",
-    "deploy": "git subtree push --prefix dist origin gh-pages"
+    "build": "parcel build index.html --out-dir build --public-url '.'",
+    "deploy": "git subtree push --prefix build origin gh-pages"
   },
   "author": "",
   "license": "ISC",
